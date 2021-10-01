@@ -15,4 +15,7 @@ public interface CepRepository extends JpaRepository<Cep, Long> {
 	
 	@Query("select p from Cep p where :cep between p.faixaInicio and p.faixaFim")
 	List<Cep> findByFaixaCepBetween(long cep);
+	
+	@Query("select p from Cep p where id != :id and (:faixaInicio between p.faixaInicio and p.faixaFim or :faixaFim between p.faixaInicio and p.faixaFim)")
+	List<Cep> findByIdFaixaBetween(long id, long faixaInicio, long faixaFim);
 }

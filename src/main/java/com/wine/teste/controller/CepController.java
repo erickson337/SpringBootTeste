@@ -84,6 +84,10 @@ public class CepController {
 				return new ResponseEntity<Object>("Faixa de cep inválida!", HttpStatus.BAD_REQUEST); 
 			}
 			
+			if (cep.getId() == 0) {
+				return new ResponseEntity<Object>("Id de cep inválido!", HttpStatus.BAD_REQUEST); 				
+			}
+			
 			String codigoLoja = cep.getCodigoLoja();
 			if (codigoLoja != null && !codigoLoja.trim().equals("")) {
 				Loja loja = lojaRepository.findByCodigoLoja(codigoLoja);
@@ -93,8 +97,13 @@ public class CepController {
 				}
 			}
 			
+			List<Cep> ceps = cepRepository.findByIdFaixaBetween(cep.getId(), cep.getFaixaInicio(), cep.getFaixaFim());
+
+			if (ceps.size() != 0) {
+				return new ResponseEntity<Object>("Faixa de cep já cadastrada!", HttpStatus.BAD_REQUEST);
+			}
 			Cep cepEdit = cepRepository.save(cep);
-			return new ResponseEntity<Object>(cepEdit, HttpStatus.OK);			
+			return new ResponseEntity<Object>(cepEdit, HttpStatus.OK);				
 		} catch (Exception e) {
 			return new ResponseEntity<Object>("Não foi possível editar este cep, tente novamente!", HttpStatus.BAD_REQUEST);
 		}
